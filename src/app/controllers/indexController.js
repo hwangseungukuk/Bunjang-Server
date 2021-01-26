@@ -28,6 +28,7 @@ exports.default = async function (req, res) {
 
 exports.valid = async function (req, res) {
     const accessToken = req.body.accessToken;
+
     console.log('토큰 >>', accessToken);
     //return res.json(accessToken);
 
@@ -48,6 +49,7 @@ exports.valid = async function (req, res) {
             }, async (res, body) => {
                 try {
                     console.log('사용자 정보 결과 >>', body.body);
+                    console.log(body.body.age_range);
                     //res.send(body.body);
                 } catch (err) {
                     console.log('사용자 정보 에러 >>', err);
@@ -58,7 +60,7 @@ exports.valid = async function (req, res) {
         }
     })
 
-
+    res.json({"message": "success"});
     // request.get({
     //     url: "https://kapi.kakao.com/v2/user/me",
     //     headers: {
@@ -72,5 +74,38 @@ exports.valid = async function (req, res) {
     //         console.log('사용자 정보 에러 >>', err);
     //     }
     // });
+
+};
+
+exports.login = async function (req, res) {
+    request.get({
+        url: "https://kapi.kakao.com/v1/user/access_token_info",
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }, async (res, body) => {
+        try {
+            console.log('유효성 결과 >>', body.body);
+            //res.send(body.body);
+            request.get({
+                url: "https://kapi.kakao.com/v2/user/me",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }, async (res, body) => {
+                try {
+                    console.log('사용자 정보 결과 >>', body.body);
+                    console.log(body.body.age_range);
+                    //res.send(body.body);
+                } catch (err) {
+                    console.log('사용자 정보 에러 >>', err);
+                }
+            });
+        } catch (err) {
+            console.log('유효성 에러 >>', err);
+        }
+    })
+    //res.json({"message": "success"});
+
 
 };

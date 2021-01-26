@@ -11,5 +11,6 @@ module.exports = function(app){
     app.get('/valid-token', index.valid);
     app.post('/valid-token', index.valid);
     
+    app.get('/login', index.login);
     
 };
