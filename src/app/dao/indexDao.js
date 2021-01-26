@@ -4,7 +4,6 @@ const { pool } = require("../../../config/database");
 async function defaultDao() {
   const connection = await pool.getConnection(async (conn) => conn);
   const selectUserQuery = `SELECT * FROM User`;
-  //SELECT * FROM places
 
   const [rows] = await connection.query(selectUserQuery)
   connection.release();
