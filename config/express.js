@@ -5,6 +5,9 @@ const methodOverride = require('method-override');
 var cors = require('cors');
 
 module.exports = function () {
+
+    console.log('express.js 실행 중');
+
     const app = express();
 
     app.use(compression());
@@ -22,7 +25,5 @@ module.exports = function () {
     require('../src/app/routes/indexRoute')(app);
     require('../src/app/routes/userRoute')(app);
 
-    
-    
     return app;
 };

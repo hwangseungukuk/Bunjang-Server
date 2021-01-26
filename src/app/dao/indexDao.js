@@ -1,6 +1,6 @@
 const { pool } = require("../../../config/database");
 
-// index
+// index (예시)
 async function defaultDao() {
   const connection = await pool.getConnection(async (conn) => conn);
   const selectUserQuery = `SELECT * FROM User`;
@@ -8,7 +8,6 @@ async function defaultDao() {
 
   const [rows] = await connection.query(selectUserQuery)
   connection.release();
-
   return rows;
 }
 
