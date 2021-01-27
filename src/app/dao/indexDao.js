@@ -10,6 +10,17 @@ async function defaultDao() {
   return rows;
 }
 
+// 사용자 중복 검사
+async function duplicateCheck() {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const selectUserQuery = `SELECT COUNT(*) FROM User WHERE deviceID = ?`;
+
+  const [rows] = await connection.query(selectUserQuery)
+  connection.release();
+  return rows;
+}
+
 module.exports = {
   defaultDao,
+  duplicateCheck
 };

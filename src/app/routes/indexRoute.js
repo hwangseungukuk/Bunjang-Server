@@ -7,10 +7,13 @@ module.exports = function(app){
     // 테스트 API
     app.get('/test', index.default);
 
-    // Access Token 유효성 검사
-    app.get('/valid-token', index.valid);
+    // Access Token 전송
     app.post('/valid-token', index.valid);
     
+    // Access Token 유효성 검사
+    app.get('/valid-token', index.valid);
+
+    // 메인 피드
     app.get('/login', index.login);
     
 };
