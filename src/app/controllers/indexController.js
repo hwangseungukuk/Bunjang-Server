@@ -62,24 +62,10 @@ exports.valid = async function (req, res) {
 
     // 사용자 중복 검사 (쿼리 사용)
 
-    // 사용자 등록
-    try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const [rows] = await indexDao.defaultDao();
-            console.log('rows >>', rows);
-            return res.json(rows);
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            //return false;
-        }
-    } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
-        //return false;
-    }
-
+    // 중복시 바로 메인으로 이동
+    
+    // 중복 아닐시 회원 등록
+    
 
     res.json({"isSuccess":true, "code":100, "message":"성공"});
 
