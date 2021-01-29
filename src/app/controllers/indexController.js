@@ -102,7 +102,7 @@ exports.valid = async function (req, res) {
     } else if (isDuplicated == 0) {
         res.json({"isSuccess":true, "code":101, "message":"사용자 중복 O"});
     } else {
-        res.json({"isSuccess":false, "code":201, "message":유효성 검증 실패});
+        res.json({"isSuccess":false, "code":201, "message":"유효성 검증 실패"});
     }
 
 };
