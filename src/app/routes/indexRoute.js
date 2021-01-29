@@ -14,6 +14,6 @@ module.exports = function(app){
     app.get('/valid-token', index.valid);
 
     // 메인 피드
-    app.get('/login', index.login);
+    app.get('/', index.login);
     
 };

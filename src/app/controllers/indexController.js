@@ -27,12 +27,16 @@ exports.default = async function (req, res) {
 };
 
 exports.valid = async function (req, res) {
+
     const accessToken = req.body.accessToken;
-    //const accessToken = "O8GcAibhEbq3rt_pVO58572kZZ4zWi-v1Gbv3Qopb1UAAAF3Q3Sr5Q";
 
+    //accessToken 값 확인
     console.log('토큰 >>', accessToken);
-    //return res.json(accessToken);
 
+    //이미 가입한 회원인지
+    let isDuplicated = 0;
+
+    //accessToken 유효성 검사
     request.get({
         url: "https://kapi.kakao.com/v1/user/access_token_info",
         headers: {
@@ -41,7 +45,8 @@ exports.valid = async function (req, res) {
     }, async (res, body) => {
         try {
             console.log('유효성 결과 >>', JSON.parse(body.body));
-            //res.send(body.body);
+
+            //사용자 정보 조회
             request.get({
                 url: "https://kapi.kakao.com/v2/user/me",
                 headers: {
@@ -49,25 +54,54 @@ exports.valid = async function (req, res) {
                 }
             }, async (res, body) => {
                 try {
+                    const kakaopkID = JSON.parse(body.body).id;
+                    //const kakaopkID = 123;
+
+                    console.log('카카오 PK ID >>', kakaopkID);
                     console.log('사용자 정보 결과 >>', JSON.parse(body.body));
-                    //res.send(body.body);
+                    
+                    try {
+                        const connection = await pool.getConnection(async conn => conn);
+                        try {
+                            const [rows] = await indexDao.duplicateCheck(kakaopkID);
+                            isDuplicated = rows.isDuplicated;
+                            console.log('중복 검사 결과 >>', isDuplicated);
+
+                            if (isDuplicated == 0) {
+                                // 데이터 추가
+                                await indexDao.addUser(kakaopkID);
+                            }
+
+
+                        } catch (err) {
+                            console.log(err);
+                            connection.release();
+                            return false;
+                        }
+
+                    } catch (err) {
+                        console.log(err);
+                        return false;
+                    }
+
                 } catch (err) {
                     console.log('사용자 정보 에러 >>', err);
+                    return false;
                 }
             });
         } catch (err) {
             console.log('유효성 에러 >>', err);
+            return false;
         }
-    })
 
-    // 사용자 중복 검사 (쿼리 사용)
 
-    // 중복시 바로 메인으로 이동
+    });
     
-    // 중복 아닐시 회원 등록
-    
-
-    res.json({"isSuccess":true, "code":100, "message":"성공"});
+    if (isDuplicated == 1) {
+        res.json({"isSuccess":true, "code":100, "message":"사용자 중복 X"});
+    } else {
+        res.json({"isSuccess":true, "code":101, "message":"사용자 중복 O"});
+    }
 
 };
 
