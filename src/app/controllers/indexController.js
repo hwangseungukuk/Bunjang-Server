@@ -55,8 +55,7 @@ exports.valid = async function (req, res) {
             }, async (res, body) => {
                 try {
                     const kakaopkID = JSON.parse(body.body).id;
-                    //const kakaopkID = 123;
-
+                    
                     console.log('카카오 PK ID >>', kakaopkID);
                     console.log('사용자 정보 결과 >>', JSON.parse(body.body));
                     
@@ -68,11 +67,8 @@ exports.valid = async function (req, res) {
                             console.log('중복 검사 결과 >>', isDuplicated);
 
                             if (isDuplicated == 0) {
-                                // 데이터 추가
-                                await indexDao.addUser(kakaopkID);
+                                await indexDao.addUser(kakaopkID); // 유저 데이터 추가
                             }
-
-
                         } catch (err) {
                             console.log(err);
                             connection.release();
@@ -97,12 +93,12 @@ exports.valid = async function (req, res) {
 
     });
     
-    if (isDuplicated == 1) {
+    if (isDuplicated == 1 && kakaopkID != null) {
         res.json({"isSuccess":true, "code":100, "message":"사용자 중복 X"});
-    } else if (isDuplicated == 0) {
+    } else if (isDuplicated == 0 && kakaopkID != null) {
         res.json({"isSuccess":true, "code":101, "message":"사용자 중복 O"});
     } else {
-        res.json({"isSuccess":false, "code":201, "message":"유효성 검증 실패"});
+        res.json({"isSuccess":false, "code":201, "message":"토큰 유효성 검증 실패"});
     }
 
 };
