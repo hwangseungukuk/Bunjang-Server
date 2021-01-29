@@ -99,8 +99,10 @@ exports.valid = async function (req, res) {
     
     if (isDuplicated == 1) {
         res.json({"isSuccess":true, "code":100, "message":"사용자 중복 X"});
-    } else {
+    } else if (isDuplicated == 0) {
         res.json({"isSuccess":true, "code":101, "message":"사용자 중복 O"});
+    } else {
+        res.json({"isSuccess":false, "code":201, "message":유효성 검증 실패});
     }
 
 };
