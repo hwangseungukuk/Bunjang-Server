@@ -1,6 +1,7 @@
 const express = require('express');
 const compression = require('compression');
 const methodOverride = require('method-override');
+const bodyParser = require('body-parser');
 
 var cors = require('cors');
 
@@ -15,6 +16,10 @@ module.exports = function () {
     app.use(express.json());
 
     app.use(express.urlencoded({extended: true}));
+
+    app.use(bodyParser.json());
+
+    app.use(bodyParser.urlencoded({extended: true}));
 
     app.use(methodOverride());
 

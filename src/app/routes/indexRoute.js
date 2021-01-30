@@ -14,6 +14,16 @@ module.exports = function(app){
     app.get('/valid-token', index.valid);
 
     // 메인 피드
-    app.get('/', index.login);
+    app.post('/', jwtMiddleware, index.main);
+    app.get('/', jwtMiddleware, index.main);
+
+    // 특정 카테고리
+    app.get('/:categoryIndex', jwtMiddleware, index.main);
+
+    // 특정 카테고리 - 서브 카테고리
+    app.get('/:categoryIndex/:subcategoryIndex', jwtMiddleware, index.main);
+
+    // 특정 카테고리 - 서브 카테고리 - 서브서브 카테고리
+    app.get('/:categoryIndex/:subcategoryIndex/:subsubcategoryIndex', jwtMiddleware, index.main);
     
 };
