@@ -40,6 +40,7 @@ exports.valid = async function (req, res) {
 
     // 유저 인덱스
     let userIndex;
+    let userName;
 
     const promise = new Promise((resolve, reject) => {
 
@@ -61,7 +62,7 @@ exports.valid = async function (req, res) {
                 }, async (res, body) => {
                     try {
                         const kakaopkID = JSON.parse(body.body).id;
-                            
+    
                         console.log('카카오 PK ID >>', kakaopkID);
                         console.log('사용자 정보 결과 >>', JSON.parse(body.body));
                         
@@ -75,18 +76,27 @@ exports.valid = async function (req, res) {
                                     // 유저 데이터 추가하고 userIndex 불러오기
                                     const rows = await indexDao.addUser(kakaopkID);
                                     console.log('유저 인덱스 >>', rows);
-                                    userIndex = rows;
+                                    userIndex = rows.insertId;
+                                    console.log('데이터 추가>>', userIndex);
                                 }
                                 else if (isDuplicated == 1) {
                                     // userIndex 불러오기
                                     userIndex = rows.userIndex;
                                     console.log('유저 인덱스 >>', userIndex);
                                 }
-                                const mcsl = {
+
+                                //userName = '0'.padStart(3, '상점').padEnd(10, userIndex);
+                                // 00000001
+                                let makeName = String(userIndex);
+                                userName = makeName.length >= 8 ? makeName:new Array(8-makeName.padEnd.length+1).join('0')+makeName;
+                                userName = '상점' + userName;
+
+                                const userData = {
                                     userIndex: userIndex,
-                                    isDuplicated: isDuplicated
+                                    isDuplicated: isDuplicated,
+                                    userName: userName
                                 };
-                                resolve(mcsl); 
+                                resolve(userData); 
 
                             } catch (err) {
                                 console.log(err);
@@ -113,7 +123,8 @@ exports.valid = async function (req, res) {
     promise.then((value) => {
         userIndex = value.userIndex;
         isDuplicated = value.isDuplicated;
-        console.log('결과 >>', userIndex, isDuplicated);
+        userName = value.userName;
+        console.log('결과 >>', userIndex, isDuplicated, userName);
         
         let token = jwt.sign({
             id: userIndex
@@ -128,6 +139,7 @@ exports.valid = async function (req, res) {
         if (isDuplicated == 1) {
             res.json({
                 jwt: token,
+                userName: userName,
                 isSuccess:true,
                 code:100,
                 message:"사용자 중복 O"
@@ -135,6 +147,7 @@ exports.valid = async function (req, res) {
         } else if (isDuplicated == 0) {
             res.json({
                 jwt: token,
+                userName: userName,
                 isSucces:true,
                 code:101,
                 message:"사용자 중복 X"

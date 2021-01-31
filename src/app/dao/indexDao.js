@@ -13,7 +13,7 @@ async function defaultDao() {
 // 사용자 중복 검사
 async function duplicateCheck(kakaopkID) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const countpkIDQuery = `SELECT COUNT(*) AS isDuplicated, userIndex FROM User WHERE kakaopkID = ${kakaopkID}`;
+  const countpkIDQuery = `SELECT COUNT(*) AS isDuplicated, userIndex, userName FROM User WHERE kakaopkID = ${kakaopkID}`;
   const [rows] = await connection.query(countpkIDQuery)
   connection.release();
   return rows;
@@ -26,7 +26,8 @@ async function addUser(kakaopkID) {
   SELECT 'default.png', CONCAT('상점', (SELECT LPAD(COUNT(*) + 1, 8, '0') FROM User)), ${kakaopkID}`;
   const [rows] = await connection.query(addUserQuery)
   connection.release();
-  return rows.insertId;
+  //return rows.insertId;
+  return rows;
 }
 
 // 메인 피드 - 제품사진, 제품명, 제품가격, 판매자 프로필 이미지, 판매지 이름, 등록 시간
@@ -45,10 +46,18 @@ async function mainFeed(userIndex) {
   WHERE (p.onlyMyPlace = 0 OR (p.onlyMyPlace = 1 AND p.place = (SELECT u1.place FROM User u1 WHERE u1.userIndex = ${userIndex})));`;
 
   const [rows] = await connection.query(mainFeedQuery);
-  console.log('메인 피드 불러오기 >>', rows);
   connection.release();
   return rows;
 }
+
+
+// async function getIIIIII(userIndex) {
+//   const connection = await pool.getConnection(async (conn) => conn);
+//   const countpkIDQuery = `SELECT userName FROM User WHERE userIndex = ${userIndex}`;
+//   const [rows] = await connection.query(countpkIDQuery)
+//   connection.release();
+//   return rows;
+// }
 
 
 module.exports = {

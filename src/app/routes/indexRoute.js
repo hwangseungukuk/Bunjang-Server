@@ -15,7 +15,7 @@ module.exports = function(app){
 
     // 메인 피드
     app.post('/', jwtMiddleware, index.main);
-    app.get('/', jwtMiddleware, index.main);
+    //app.get('/', jwtMiddleware, index.main);
 
     // 특정 카테고리
     app.get('/:categoryIndex', jwtMiddleware, index.main);
