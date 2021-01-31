@@ -21,4 +21,14 @@ module.exports = function(app){
     app.get('/:categoryIndex', jwtMiddleware, index.see1);
     app.post('/:categoryIndex', jwtMiddleware, index.see1);
     
+    // 특정 서브 카테고리 글 보기
+    app.get('/sub/:subCategoryIndex', jwtMiddleware, index.see2);
+    app.post('/sub/:subCategoryIndex', jwtMiddleware, index.see2);
+
+    // 특정 서브서브 카테고리 글 보기
+    app.get('/subsub/:subsubCategoryIndex', jwtMiddleware, index.see3);
+    app.post('/subsub/:subsubCategoryIndex', jwtMiddleware, index.see3);
+
+    // 세부 글 보기
+    //app.get('/post/:postIndex', jwtMiddleware, index.see);
 };

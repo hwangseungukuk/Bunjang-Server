@@ -206,8 +206,44 @@ exports.see1 = async function (req, res) {
 
 exports.see2 = async function (req, res) {
     const userIndex = req.verifiedToken.id;
+    const subCategoryIndex = req.params.subCategoryIndex;
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const rows = await indexDao.see2(userIndex, subCategoryIndex);
+            console.log('rows >>', rows);
+            return res.json(rows);
+        } catch (err) {
+            console.log(err);
+            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+            connection.release();
+            return false;
+        }
+    } catch (err) {
+        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        return false;
+    }
 }
 
 exports.see3 = async function (req, res) {
     const userIndex = req.verifiedToken.id;
+    const subsubCategoryIndex = req.params.subsubCategoryIndex;
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const rows = await indexDao.see3(userIndex, subsubCategoryIndex);
+            console.log('rows >>', rows);
+            return res.json(rows);
+        } catch (err) {
+            console.log(err);
+            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+            connection.release();
+            return false;
+        }
+    } catch (err) {
+        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        return false;
+    }
 }

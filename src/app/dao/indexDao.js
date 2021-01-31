@@ -50,18 +50,11 @@ async function mainFeed(userIndex) {
   return rows;
 }
 
-// 특정 카테고리 글 보기 - 제품사진, 제품명, 제품가격, 판매자 이름
+// 특정 카테고리 글 보기 - 제품사진, 제품명, 제품가격
 async function see1(userIndex, categoryIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
   const see1Query = `
-    SELECT p.postIndex, p.productName, p.price, pi.postImgURL, u.userName,
-    (CASE
-        WHEN TIMESTAMPDIFF(MINUTE, p.createdAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, p.createdAt, NOW()), '분 전')
-        WHEN TIMESTAMPDIFF(HOUR, p.createdAt, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, p.createdAt, NOW()), '시간 전')
-        WHEN TIMESTAMPDIFF(DAY, p.createdAt, NOW()) < 31 THEN CONCAT(TIMESTAMPDIFF(DAY, createdAt, NOW()), '일 전')
-        WHEN TIMESTAMPDIFF(MONTH, p.createdAt, NOW()) < 12 THEN CONCAT(TIMESTAMPDIFF(MONTH, createdAt, NOW()), '달 전')
-        ELSE CONCAT(TIMESTAMPDIFF(YEAR, createdAt, NOW()), '년 전')
-    END) AS uploadDate
+    SELECT p.postIndex, p.productName, p.price, pi.postImgURL
     FROM Post p LEFT JOIN User u ON p.userIndex = u.userIndex
     LEFT JOIN postImg pi ON pi.postIndex = p.postIndex AND pi.isFirst = 1
     WHERE ((p.onlyMyPlace = 0 OR (p.onlyMyPlace = 1 AND p.place = (SELECT u1.place FROM User u1 WHERE u1.userIndex = ?))) AND ((p.categoryIndex - 1) DIV 4) + 1 = ?);
@@ -71,6 +64,49 @@ async function see1(userIndex, categoryIndex) {
 
   const [rows] = await connection.query(
     see1Query,
+    params
+  );
+
+  console.log('params >>', params);
+  return rows;
+}
+
+// 특정 서브 카테고리 글 보기 - 제품사진, 제품명, 제품가격
+async function see2(userIndex, subCategoryIndex) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const see2Query = `
+    SELECT p.postIndex, p.productName, p.price, pi.postImgURL
+    FROM Post p LEFT JOIN User u ON p.userIndex = u.userIndex
+    LEFT JOIN postImg pi ON pi.postIndex = p.postIndex AND pi.isFirst = 1
+    WHERE ((p.onlyMyPlace = 0 OR (p.onlyMyPlace = 1 AND p.place = (SELECT u1.place FROM User u1 WHERE u1.userIndex = ?))) AND ((p.categoryIndex - 1) DIV 2) + 1 = ?);
+  `;
+  
+  var params = [userIndex, subCategoryIndex];
+
+  const [rows] = await connection.query(
+    see2Query,
+    params
+  );
+  
+  console.log('params >>', params);
+  return rows;
+}
+
+
+// 특정 서브서브 카테고리 글 보기 - 제품사진, 제품명, 제품가격
+async function see3(userIndex, subsubCategoryIndex) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const see3Query = `
+    SELECT p.postIndex, p.productName, p.price, pi.postImgURL
+    FROM Post p LEFT JOIN User u ON p.userIndex = u.userIndex
+    LEFT JOIN postImg pi ON pi.postIndex = p.postIndex AND pi.isFirst = 1
+    WHERE ((p.onlyMyPlace = 0 OR (p.onlyMyPlace = 1 AND p.place = (SELECT u1.place FROM User u1 WHERE u1.userIndex = ?))) AND (p.categoryIndex = ?));
+  `;
+  
+  var params = [userIndex, subsubCategoryIndex];
+
+  const [rows] = await connection.query(
+    see3Query,
     params
   );
   
@@ -83,5 +119,7 @@ module.exports = {
   duplicateCheck,
   addUser,
   mainFeed,
-  see1
+  see1,
+  see2,
+  see3
 };
