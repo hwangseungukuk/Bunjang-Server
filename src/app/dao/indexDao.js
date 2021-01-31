@@ -1,15 +1,5 @@
 const { pool } = require("../../../config/database");
 
-// index (예시)
-async function defaultDao() {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const selectUserQuery = `SELECT * FROM User`;
-
-  const [rows] = await connection.query(selectUserQuery)
-  connection.release();
-  return rows;
-}
-
 // 사용자 중복 검사
 async function duplicateCheck(kakaopkID) {
   const connection = await pool.getConnection(async (conn) => conn);
@@ -114,6 +104,24 @@ async function see3(userIndex, subsubCategoryIndex) {
   return rows;
 }
 
+// 세부 글 보기
+async function seePost(userIndex, postIndex) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const seePostQuery = `
+    
+  `;
+  
+  var params = [userIndex, postIndex];
+
+  const [rows] = await connection.query(
+    seePostQuery,
+    params
+  );
+  
+  console.log('params >>', params);
+  return rows;
+}
+
 module.exports = {
   defaultDao,
   duplicateCheck,
@@ -121,5 +129,6 @@ module.exports = {
   mainFeed,
   see1,
   see2,
-  see3
+  see3,
+  seePost
 };

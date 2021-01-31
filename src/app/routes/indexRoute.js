@@ -4,9 +4,6 @@ module.exports = function(app){
     const index = require('../controllers/indexController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
-    // 테스트 API
-    app.get('/test', index.default);
-
     // Access Token 전송
     app.post('/valid-token', index.valid);
     
@@ -18,17 +15,18 @@ module.exports = function(app){
     //app.get('/', jwtMiddleware, index.main);
 
     // 특정 카테고리 글 보기
-    app.get('/:categoryIndex', jwtMiddleware, index.see1);
-    app.post('/:categoryIndex', jwtMiddleware, index.see1);
+    app.get('/category/:categoryIndex', jwtMiddleware, index.see1);
+    app.post('/category/:categoryIndex', jwtMiddleware, index.see1);
     
     // 특정 서브 카테고리 글 보기
-    app.get('/sub/:subCategoryIndex', jwtMiddleware, index.see2);
-    app.post('/sub/:subCategoryIndex', jwtMiddleware, index.see2);
+    app.get('/subCategory/:subCategoryIndex', jwtMiddleware, index.see2);
+    app.post('/subCategory/:subCategoryIndex', jwtMiddleware, index.see2);
 
     // 특정 서브서브 카테고리 글 보기
-    app.get('/subsub/:subsubCategoryIndex', jwtMiddleware, index.see3);
-    app.post('/subsub/:subsubCategoryIndex', jwtMiddleware, index.see3);
+    app.get('/subsubCategory/:subsubCategoryIndex', jwtMiddleware, index.see3);
+    app.post('/subsubCategory/:subsubCategoryIndex', jwtMiddleware, index.see3);
 
     // 세부 글 보기
-    //app.get('/post/:postIndex', jwtMiddleware, index.see);
+    app.get('/post/:postIndex', jwtMiddleware, index.post);
+    app.post('/post/:postIndex', jwtMiddleware, index.post);
 };
