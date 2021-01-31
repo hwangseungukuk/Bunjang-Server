@@ -85,8 +85,7 @@ exports.valid = async function (req, res) {
                                     console.log('유저 인덱스 >>', userIndex);
                                 }
 
-                                //userName = '0'.padStart(3, '상점').padEnd(10, userIndex);
-                                // 00000001
+                                //userName 생성
                                 let makeName = String(userIndex);
                                 userName = makeName.length >= 8 ? makeName:new Array(8-makeName.padEnd.length+1).join('0')+makeName;
                                 userName = '상점' + userName;
@@ -164,8 +163,6 @@ exports.valid = async function (req, res) {
 
 exports.main = async function (req, res) {
     const userIndex = req.verifiedToken.id;
-    console.log(req.verifiedToken);
-    //JSON.parse(body.body)
     // 게시글 최신순으로 불러오기
     try {
         const connection = await pool.getConnection(async conn => conn);
@@ -183,5 +180,34 @@ exports.main = async function (req, res) {
         logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
         return false;
     }
-
 };
+
+exports.see1 = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+    const categoryIndex = req.params.categoryIndex;
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const rows = await indexDao.see1(userIndex, categoryIndex);
+            console.log('rows >>', rows);
+            return res.json(rows);
+        } catch (err) {
+            console.log(err);
+            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+            connection.release();
+            return false;
+        }
+    } catch (err) {
+        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        return false;
+    }
+}
+
+exports.see2 = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+}
+
+exports.see3 = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+}

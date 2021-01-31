@@ -17,13 +17,8 @@ module.exports = function(app){
     app.post('/', jwtMiddleware, index.main);
     //app.get('/', jwtMiddleware, index.main);
 
-    // 특정 카테고리
-    app.get('/:categoryIndex', jwtMiddleware, index.main);
-
-    // 특정 카테고리 - 서브 카테고리
-    app.get('/:categoryIndex/:subcategoryIndex', jwtMiddleware, index.main);
-
-    // 특정 카테고리 - 서브 카테고리 - 서브서브 카테고리
-    app.get('/:categoryIndex/:subcategoryIndex/:subsubcategoryIndex', jwtMiddleware, index.main);
+    // 특정 카테고리 글 보기
+    app.get('/:categoryIndex', jwtMiddleware, index.see1);
+    app.post('/:categoryIndex', jwtMiddleware, index.see1);
     
 };
