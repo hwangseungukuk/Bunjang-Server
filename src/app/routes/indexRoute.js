@@ -15,18 +15,25 @@ module.exports = function(app){
     //app.get('/', jwtMiddleware, index.main);
 
     // 특정 카테고리 글 보기
-    app.get('/category/:categoryIndex', jwtMiddleware, index.see1);
-    app.post('/category/:categoryIndex', jwtMiddleware, index.see1);
+    app.get('/category/:categoryIndex', jwtMiddleware, index.seeCategoryPost);
+    app.post('/category/:categoryIndex', jwtMiddleware, index.seeCategoryPost);
     
     // 특정 서브 카테고리 글 보기
-    app.get('/subCategory/:subCategoryIndex', jwtMiddleware, index.see2);
-    app.post('/subCategory/:subCategoryIndex', jwtMiddleware, index.see2);
+    app.get('/subCategory/:subCategoryIndex', jwtMiddleware, index.seeSubCategoryPost);
+    app.post('/subCategory/:subCategoryIndex', jwtMiddleware, index.seeSubCategoryPost);
 
     // 특정 서브서브 카테고리 글 보기
-    app.get('/subsubCategory/:subsubCategoryIndex', jwtMiddleware, index.see3);
-    app.post('/subsubCategory/:subsubCategoryIndex', jwtMiddleware, index.see3);
+    app.get('/subsubCategory/:subsubCategoryIndex', jwtMiddleware, index.seeSubsubCategoryPost);
+    app.post('/subsubCategory/:subsubCategoryIndex', jwtMiddleware, index.seeSubsubCategoryPost);
 
     // 세부 글 보기
     app.get('/post/:postIndex', jwtMiddleware, index.post);
     app.post('/post/:postIndex', jwtMiddleware, index.post);
+
+    // 
+
+
+    // 
+
+
 };

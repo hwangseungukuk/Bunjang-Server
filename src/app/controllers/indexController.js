@@ -163,7 +163,7 @@ exports.main = async function (req, res) {
     }
 };
 
-exports.see1 = async function (req, res) {
+exports.seeCategoryPost = async function (req, res) {
     const userIndex = req.verifiedToken.id;
     const categoryIndex = req.params.categoryIndex;
 
@@ -185,7 +185,7 @@ exports.see1 = async function (req, res) {
     }
 }
 
-exports.see2 = async function (req, res) {
+exports.seeSubCategoryPost = async function (req, res) {
     const userIndex = req.verifiedToken.id;
     const subCategoryIndex = req.params.subCategoryIndex;
 
@@ -207,7 +207,7 @@ exports.see2 = async function (req, res) {
     }
 }
 
-exports.see3 = async function (req, res) {
+exports.seeSubsubCategoryPost = async function (req, res) {
     const userIndex = req.verifiedToken.id;
     const subsubCategoryIndex = req.params.subsubCategoryIndex;
 

@@ -41,7 +41,7 @@ async function mainFeed(userIndex) {
 }
 
 // 특정 카테고리 글 보기 - 제품사진, 제품명, 제품가격
-async function see1(userIndex, categoryIndex) {
+async function seeCategoryPost(userIndex, categoryIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
   const see1Query = `
     SELECT p.postIndex, p.productName, p.price, pi.postImgURL
@@ -62,7 +62,7 @@ async function see1(userIndex, categoryIndex) {
 }
 
 // 특정 서브 카테고리 글 보기 - 제품사진, 제품명, 제품가격
-async function see2(userIndex, subCategoryIndex) {
+async function seeSubCategoryPost(userIndex, subCategoryIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
   const see2Query = `
     SELECT p.postIndex, p.productName, p.price, pi.postImgURL
@@ -84,7 +84,7 @@ async function see2(userIndex, subCategoryIndex) {
 
 
 // 특정 서브서브 카테고리 글 보기 - 제품사진, 제품명, 제품가격
-async function see3(userIndex, subsubCategoryIndex) {
+async function seeSubsubCategoryPost(userIndex, subsubCategoryIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
   const see3Query = `
     SELECT p.postIndex, p.productName, p.price, pi.postImgURL
@@ -127,8 +127,8 @@ module.exports = {
   duplicateCheck,
   addUser,
   mainFeed,
-  see1,
-  see2,
-  see3,
+  seeCategoryPost,
+  seeSubCategoryPost,
+  seeSubsubCategoryPost,
   seePost
 };
