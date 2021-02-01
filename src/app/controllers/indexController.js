@@ -185,7 +185,7 @@ exports.seeCategoryPost = async function (req, res) {
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const rows = await indexDao.see1(userIndex, categoryIndex);
+            const rows = await indexDao.seeCategoryPost(userIndex, categoryIndex);
             console.log('rows >>', rows);
             return res.json({
                 isSuccess:true,
@@ -220,7 +220,7 @@ exports.seeSubCategoryPost = async function (req, res) {
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const rows = await indexDao.see2(userIndex, subCategoryIndex);
+            const rows = await indexDao.seeSubCategoryPost(userIndex, subCategoryIndex);
             console.log('rows >>', rows);
             return res.json({
                 isSuccess:true,
@@ -255,7 +255,7 @@ exports.seeSubsubCategoryPost = async function (req, res) {
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const rows = await indexDao.see3(userIndex, subsubCategoryIndex);
+            const rows = await indexDao.seeSubsubCategoryPost(userIndex, subsubCategoryIndex);
             console.log('rows >>', rows);
             return res.json({
                 isSuccess:true,
