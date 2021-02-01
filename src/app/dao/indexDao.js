@@ -108,7 +108,7 @@ async function seeSubsubCategoryPost(userIndex, subsubCategoryIndex) {
 async function seePost(userIndex, postIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
   const seePostQuery = `
-  
+
   `;
   
   var params = [postIndex, postIndex, postIndex, postIndex];

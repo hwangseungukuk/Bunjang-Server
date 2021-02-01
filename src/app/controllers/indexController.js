@@ -162,11 +162,19 @@ exports.main = async function (req, res) {
             console.log(err);
             logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
             connection.release();
-            return false;
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
         }
     } catch (err) {
         logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
-        return false;
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
     }
 };
 
@@ -179,16 +187,29 @@ exports.seeCategoryPost = async function (req, res) {
         try {
             const rows = await indexDao.see1(userIndex, categoryIndex);
             console.log('rows >>', rows);
-            return res.json(rows);
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"특정 카테고리 글 불러오기 성공",
+                rows: rows
+            });
         } catch (err) {
             console.log(err);
             logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
             connection.release();
-            return false;
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
         }
     } catch (err) {
         logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
-        return false;
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
     }
 }
 
@@ -201,16 +222,29 @@ exports.seeSubCategoryPost = async function (req, res) {
         try {
             const rows = await indexDao.see2(userIndex, subCategoryIndex);
             console.log('rows >>', rows);
-            return res.json(rows);
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"특정 서브 카테고리 글 불러오기 성공",
+                rows: rows
+            });
         } catch (err) {
             console.log(err);
             logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
             connection.release();
-            return false;
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
         }
     } catch (err) {
         logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
-        return false;
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
     }
 }
 
@@ -223,16 +257,29 @@ exports.seeSubsubCategoryPost = async function (req, res) {
         try {
             const rows = await indexDao.see3(userIndex, subsubCategoryIndex);
             console.log('rows >>', rows);
-            return res.json(rows);
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"특정 서브서브 카테고리 글 불러오기 성공",
+                rows: rows
+            });
         } catch (err) {
             console.log(err);
             logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
             connection.release();
-            return false;
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
         }
     } catch (err) {
         logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
-        return false;
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
     }
 }
 
