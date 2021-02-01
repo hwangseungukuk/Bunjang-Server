@@ -108,10 +108,10 @@ async function seeSubsubCategoryPost(userIndex, subsubCategoryIndex) {
 async function seePost(userIndex, postIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
   const seePostQuery = `
-    
+  
   `;
   
-  var params = [userIndex, postIndex];
+  var params = [postIndex, postIndex, postIndex, postIndex];
 
   const [rows] = await connection.query(
     seePostQuery,
@@ -123,7 +123,6 @@ async function seePost(userIndex, postIndex) {
 }
 
 module.exports = {
-  defaultDao,
   duplicateCheck,
   addUser,
   mainFeed,

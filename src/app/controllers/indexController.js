@@ -150,7 +150,14 @@ exports.main = async function (req, res) {
         try {
             const rows = await indexDao.mainFeed(userIndex);
             console.log('rows >>', rows);
-            return res.json(rows);
+
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"메인 피드 불러오기 성공",
+                rows: rows
+            });
+
         } catch (err) {
             console.log(err);
             logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
