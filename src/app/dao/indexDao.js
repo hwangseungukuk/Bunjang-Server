@@ -127,7 +127,7 @@ async function seePost(postIndex) {
    END) AS uploadDate,
   (SELECT w.watched FROM Watched w WHERE w.postIndex = ?) AS watched,
   (SELECT COUNT(*) FROM Jjim j WHERE j.postIndex = p.postIndex) AS jjim,
-  p.productCondition, p.freeDelievery, p.content, p.place, p.categoryIndex,
+  p.productCondition, p.freeDelievery, p.canExchange, p.supplies, p.content, p.place, p.categoryIndex,
   (SELECT COUNT(*) FROM postQuestion pq WHERE pq.postIndex = p.postIndex) AS postQuestion,
   u.userIndex, u.userName, u.profileImgURL,
   (CONCAT('+', TIMESTAMPDIFF(DAY, u.createAt, NOW()))) AS userOpenDate,
@@ -184,17 +184,11 @@ async function seePost(postIndex) {
     review: rows3
   };
 
+  console.log('result >>', result);
+
   return result;
 }
 
-// 게시글 작성하기
-async function seePost() {
-  const connection = await pool.getConnection(async (conn) => conn);
-
-  const writePostQuery = `
-  
-  `
-}
 
 
 module.exports = {
