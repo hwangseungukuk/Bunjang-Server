@@ -105,7 +105,7 @@ async function seeSubsubCategoryPost(userIndex, subsubCategoryIndex) {
 }
 
 // 세부 글 보기
-async function seePost(postIndex) {
+async function seePost(userIndex, clickedJjim, clickedFollow, postIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
 
   const updateWatchedQuery = `
@@ -127,11 +127,13 @@ async function seePost(postIndex) {
    END) AS uploadDate,
   (SELECT w.watched FROM Watched w WHERE w.watchedIndex = ?) AS watched,
   (SELECT COUNT(*) FROM Jjim j WHERE j.postIndex = p.postIndex) AS jjim,
+  (SELECT COUNT(*) FROM Jjim j WHERE j.postIndex = ? AND j.userIndex = ?) AS didJjim,
   p.productCondition, p.freeDelievery, p.canExchange, p.supplies, p.content, p.place, p.categoryIndex,
   (SELECT COUNT(*) FROM postQuestion pq WHERE pq.postIndex = p.postIndex) AS postQuestion,
   u.userIndex, u.userName, u.profileImgURL,
   (CONCAT('+', TIMESTAMPDIFF(DAY, u.createAt, NOW()))) AS userOpenDate,
   (SELECT COUNT(*) FROM Following f WHERE f.followIndex = u.userIndex) AS follower,
+  (SELECT COUNT(*) FROM Following f WHERE f.userIndex = ? AND f.followIndex = (SELECT p2.userIndex FROM Post p2 WHERE p2.postIndex = ?)) AS didFollow,
   (SELECT COUNT(*) FROM Post p1 WHERE p1.userIndex = (SELECT p.userIndex FROM Post p WHERE p.postIndex = ?)) AS totalPost,
   (SELECT COUNT(*) FROM Review r WHERE r.userIndex = p.userIndex) AS totalReview,
   (SELECT SUM(r.star)/COUNT(*) FROM Review r WHERE r.userIndex = p.userIndex) AS averageStar
@@ -184,7 +186,40 @@ async function seePost(postIndex) {
     review: rows3
   };
 
-  console.log('result >>', result);
+  // 찜 하기
+  const jjimQuery = `
+  INSERT INTO Jjim (postIndex, userIndex)
+  VALUES (?, ?);
+  `
+
+  let didJjim = 0;
+  let didFollow = 0;
+
+  if (clickedJjim == 1) {
+    var jjimParams = [postIndex, userIndex];
+    const [rows4] = await connection.query(
+      jjimQuery,
+      jjimParams
+    );
+    didJjim = 1;
+  }
+
+  // 팔로우 하기
+  const followIndex = (JSON.parse(JSON.stringify(result)).postData)[0].userIndex;
+
+  const followQuery = `
+  INSERT INTO Following (userIndex, followIndex)
+  VALUES (?, ?);
+  `
+
+  if (clickedFollow == 1) {
+    var followParams = [userIndex, followIndex];
+    const [rows5] = await connection.query(
+      followQuery,
+      followParams
+    );
+    didFollow = 1;
+  }
 
   return result;
 }
@@ -201,32 +236,7 @@ async function getPlace(userIndex) {
   return rows;
 }
 
-// 글 등록하기
-async function addPost(userIndex) {
-  
-  const connection = await pool.getConnection(async (conn) => conn);
 
-  const addPostQuery = `
-  
-  `
-
-  const addImgQuery = `
-  
-  `
-
-  const addTagQuery = `
-  
-  `
-
-  var params = [userIndex, postIndex];
-
-  const [rows] = await connection.query(
-    addPostQuery,
-    params
-  );
-
-  return rows;
-}
 
 module.exports = {
   duplicateCheck,

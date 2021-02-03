@@ -282,11 +282,13 @@ exports.seeSubsubCategoryPost = async function (req, res) {
 exports.seePost = async function (req, res) {
     const userIndex = req.verifiedToken.id;
     const postIndex = req.params.postIndex;
+    const clickedJjim = req.body.clickedJjim;
+    const clickedFollow = req.body.clickedFollow;
 
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const rows = await indexDao.seePost(postIndex);
+            const rows = await indexDao.seePost(userIndex, clickedJjim, clickedFollow, postIndex);
 
             return res.json({
                 isSuccess:true,
@@ -351,16 +353,46 @@ exports.getPlace = async function (req, res) {
 
 exports.addPost = async function (req, res) {
     const userIndex = req.verifiedToken.id;
+    const productName = req.body.productName;
+    const categoryIndex = req.body.categoryIndex;
+    const price = req.body.price;
+    const changePrice= req.body.changePrice;
+    const freeDelievery= req.body.freeDelievery;
+    const place = req.body.place; //수정필요
+    const onlyMyPlace= req.body.onlyMyPlace;
+    const tags = req.body.tags;
+    const content = req.body.content;
+    const supplies = req.body.supplies;
+    const productCondition = req.body.productCondition;
+    const canExchange = req.body.canExchange;
+
+    const result = {
+        userIndex: userIndex,
+        productName: productName,
+        categoryIndex: categoryIndex,
+        price: price,
+        changePrice: changePrice,
+        freeDelievery: freeDelievery,
+        place: place,
+        onlyMyPlace: onlyMyPlace,
+        tags: tags,
+        content: content,
+        supplies: supplies,
+        productCondition: productCondition,
+        canExchange: canExchange
+    };
+
+    console.log('body >>', result);
 
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const rows = await indexDao.addPost(userIndex);
+            const rows = await indexDao.addPost(result);
 
             return res.json({
                 isSuccess:true,
                 code:100,
-                message:"유저 지역 불러오기 성공",
+                message:"게시글 등록 성공",
                 rows: rows
             });
 
