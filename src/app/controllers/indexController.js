@@ -149,7 +149,6 @@ exports.main = async function (req, res) {
         const connection = await pool.getConnection(async conn => conn);
         try {
             const rows = await indexDao.mainFeed(userIndex);
-            console.log('rows >>', rows);
 
             return res.json({
                 isSuccess:true,
@@ -186,7 +185,6 @@ exports.seeCategoryPost = async function (req, res) {
         const connection = await pool.getConnection(async conn => conn);
         try {
             const rows = await indexDao.seeCategoryPost(userIndex, categoryIndex);
-            console.log('rows >>', rows);
             return res.json({
                 isSuccess:true,
                 code:100,
@@ -221,7 +219,6 @@ exports.seeSubCategoryPost = async function (req, res) {
         const connection = await pool.getConnection(async conn => conn);
         try {
             const rows = await indexDao.seeSubCategoryPost(userIndex, subCategoryIndex);
-            console.log('rows >>', rows);
             return res.json({
                 isSuccess:true,
                 code:100,
@@ -256,7 +253,6 @@ exports.seeSubsubCategoryPost = async function (req, res) {
         const connection = await pool.getConnection(async conn => conn);
         try {
             const rows = await indexDao.seeSubsubCategoryPost(userIndex, subsubCategoryIndex);
-            console.log('rows >>', rows);
             return res.json({
                 isSuccess:true,
                 code:100,
@@ -283,7 +279,7 @@ exports.seeSubsubCategoryPost = async function (req, res) {
     }
 }
 
-exports.post = async function (req, res) {
+exports.seePost = async function (req, res) {
     const userIndex = req.verifiedToken.id;
     const postIndex = req.params.postIndex;
 
@@ -292,11 +288,79 @@ exports.post = async function (req, res) {
         try {
             const rows = await indexDao.seePost(postIndex);
 
-            console.log('rows 최종 >>', rows);
             return res.json({
                 isSuccess:true,
                 code:100,
                 message:"특정 글 불러오기 성공",
+                rows: rows
+            });
+
+        } catch (err) {
+            console.log(err);
+            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+            connection.release();
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
+        }
+    } catch (err) {
+        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
+    }
+}
+
+exports.getPlace = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const rows = await indexDao.getPlace(userIndex);
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"유저 지역 불러오기 성공",
+                rows: rows
+            });
+
+        } catch (err) {
+            console.log(err);
+            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+            connection.release();
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
+        }
+    } catch (err) {
+        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
+    }
+}
+
+exports.addPost = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const rows = await indexDao.addPost(userIndex);
+
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"유저 지역 불러오기 성공",
                 rows: rows
             });
 

@@ -111,7 +111,7 @@ async function seePost(postIndex) {
   const updateWatchedQuery = `
   UPDATE Watched w
   SET w.watched = w.watched + 1
-  WHERE w.postIndex = ${postIndex};
+  WHERE w.watchedIndex = ${postIndex};
   `
 
   await connection.query(updateWatchedQuery);
@@ -125,7 +125,7 @@ async function seePost(postIndex) {
        WHEN TIMESTAMPDIFF(MONTH, p.createdAt, NOW()) < 12 THEN CONCAT(TIMESTAMPDIFF(MONTH, p.createdAt, NOW()), '달 전')
        ELSE CONCAT(TIMESTAMPDIFF(YEAR, p.createdAt, NOW()), '년 전')
    END) AS uploadDate,
-  (SELECT w.watched FROM Watched w WHERE w.postIndex = ?) AS watched,
+  (SELECT w.watched FROM Watched w WHERE w.watchedIndex = ?) AS watched,
   (SELECT COUNT(*) FROM Jjim j WHERE j.postIndex = p.postIndex) AS jjim,
   p.productCondition, p.freeDelievery, p.canExchange, p.supplies, p.content, p.place, p.categoryIndex,
   (SELECT COUNT(*) FROM postQuestion pq WHERE pq.postIndex = p.postIndex) AS postQuestion,
@@ -189,7 +189,36 @@ async function seePost(postIndex) {
   return result;
 }
 
+// 유저 지역 불러오기
+async function getPlace(userIndex) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getPlaceQuery = `
+  SELECT u.place FROM User u
+  WHERE u.userIndex = ${userIndex};
+  `
+  const [rows] = await connection.query(getPlaceQuery);
+  connection.release();
+  return rows;
+}
 
+// 글 등록하기
+async function addPost(userIndex, postIndex) {
+  
+  const connection = await pool.getConnection(async (conn) => conn);
+
+  const addPostQuery = `
+  
+  `
+
+  var params = [userIndex, postIndex];
+
+  const [rows] = await connection.query(
+    addPostQuery,
+    params
+  );
+
+  return rows;
+}
 
 module.exports = {
   duplicateCheck,
@@ -198,5 +227,7 @@ module.exports = {
   seeCategoryPost,
   seeSubCategoryPost,
   seeSubsubCategoryPost,
-  seePost
+  seePost,
+  getPlace,
+  addPost
 };

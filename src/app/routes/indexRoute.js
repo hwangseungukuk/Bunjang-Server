@@ -12,7 +12,7 @@ module.exports = function(app){
 
     // 메인 피드
     app.post('/', jwtMiddleware, index.main);
-    //app.get('/', jwtMiddleware, index.main);
+    app.get('/', jwtMiddleware, index.main);
 
     // 특정 카테고리 글 보기
     app.get('/category/:categoryIndex', jwtMiddleware, index.seeCategoryPost);
@@ -27,13 +27,13 @@ module.exports = function(app){
     app.post('/subsubCategory/:subsubCategoryIndex', jwtMiddleware, index.seeSubsubCategoryPost);
 
     // 세부 글 보기
-    app.get('/post/:postIndex', jwtMiddleware, index.post);
-    app.post('/post/:postIndex', jwtMiddleware, index.post);
+    app.get('/post/:postIndex', jwtMiddleware, index.seePost);
+    app.post('/post/:postIndex', jwtMiddleware, index.seePost);
 
-    // 
+    // 글 작성하기
+    app.get('/write', jwtMiddleware, index.getPlace); // 위치 불러오기
+    app.post('/write', jwtMiddleware, index.addPost); // 글 작성하기
 
-
-    // 
 
 
 };
