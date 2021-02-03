@@ -33,7 +33,7 @@ module.exports = function(app){
 
     // 글 작성하기
     app.get('/write', jwtMiddleware, index.getPlace); // 위치 불러오기
-    app.post('/write', jwtMiddleware, index.addPost); // 글 작성하기
+    //app.post('/write', jwtMiddleware, index.addPost); // 글 작성하기
 
 
 

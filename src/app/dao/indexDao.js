@@ -165,7 +165,7 @@ async function seePost(userIndex, clickedJjim, clickedFollow, postIndex) {
   ORDER BY r.createdAt DESC LIMIT 2;
   `;
 
-  var params = [postIndex, postIndex, postIndex];
+  var params = [postIndex, postIndex, userIndex, userIndex, postIndex, postIndex, postIndex];
   var params2 = [postIndex, postIndex];
 
   const [rows] = await connection.query(
@@ -247,5 +247,5 @@ module.exports = {
   seeSubsubCategoryPost,
   seePost,
   getPlace,
-  addPost
+  //addPost
 };
