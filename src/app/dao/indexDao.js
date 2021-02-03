@@ -58,6 +58,7 @@ async function seeCategoryPost(userIndex, categoryIndex) {
   );
 
   console.log('params >>', params);
+  connection.release();
   return rows;
 }
 
@@ -79,6 +80,7 @@ async function seeSubCategoryPost(userIndex, subCategoryIndex) {
   );
   
   console.log('params >>', params);
+  connection.release();
   return rows;
 }
 
@@ -101,6 +103,7 @@ async function seeSubsubCategoryPost(userIndex, subsubCategoryIndex) {
   );
   
   console.log('params >>', params);
+  connection.release();
   return rows;
 }
 
@@ -187,40 +190,66 @@ async function seePost(userIndex, clickedJjim, clickedFollow, postIndex) {
   };
 
   // 찜 하기
-  const jjimQuery = `
+  const didJjim = (JSON.parse(JSON.stringify(result)).postData)[0].didJjim;
+
+  const addJjimQuery = `
   INSERT INTO Jjim (postIndex, userIndex)
   VALUES (?, ?);
   `
-
-  let didJjim = 0;
-  let didFollow = 0;
+  const deleteJjimQuery = `
+  DELETE FROM Jjim
+  WHERE postIndex = ? AND userIndex = ?;
+  `
 
   if (clickedJjim == 1) {
     var jjimParams = [postIndex, userIndex];
-    const [rows4] = await connection.query(
-      jjimQuery,
-      jjimParams
-    );
-    didJjim = 1;
+    if (didJjim == 0) {
+      const [rows4] = await connection.query(
+        addJjimQuery,
+        jjimParams
+      );
+      console.log('찜합니다~');
+    }
+    else if (didJjim == 1) {
+      const [rows4] = await connection.query(
+        deleteJjimQuery,
+        jjimParams
+      );
+      console.log('찜 풉니다~');
+    } 
   }
 
   // 팔로우 하기
+  const didFollow = (JSON.parse(JSON.stringify(result)).postData)[0].didFollow;
   const followIndex = (JSON.parse(JSON.stringify(result)).postData)[0].userIndex;
 
   const followQuery = `
   INSERT INTO Following (userIndex, followIndex)
   VALUES (?, ?);
   `
+  const unfollowQuery = `
+  DELETE FROM Following
+  WHERE userIndex = ? AND followIndex = ?;
+  `
 
   if (clickedFollow == 1) {
     var followParams = [userIndex, followIndex];
-    const [rows5] = await connection.query(
-      followQuery,
-      followParams
-    );
-    didFollow = 1;
+    if (didFollow == 0) {
+      const [rows5] = await connection.query(
+        followQuery,
+        followParams
+      );
+      console.log('팔로합니다~');
+    }
+    else if (didFollow == 1) {
+      const [rows5] = await connection.query(
+        unfollowQuery,
+        followParams
+      );
+      console.log('언팔합니다~');
+    }
   }
-
+  connection.release();
   return result;
 }
 
@@ -247,5 +276,5 @@ module.exports = {
   seeSubsubCategoryPost,
   seePost,
   getPlace,
-  //addPost
+  addPost
 };
