@@ -202,11 +202,19 @@ async function getPlace(userIndex) {
 }
 
 // 글 등록하기
-async function addPost(userIndex, postIndex) {
+async function addPost(userIndex) {
   
   const connection = await pool.getConnection(async (conn) => conn);
 
   const addPostQuery = `
+  
+  `
+
+  const addImgQuery = `
+  
+  `
+
+  const addTagQuery = `
   
   `
 
