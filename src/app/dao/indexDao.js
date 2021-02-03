@@ -265,7 +265,55 @@ async function getPlace(userIndex) {
   return rows;
 }
 
+// 글 등록하기
+async function addPost(data) {
+  
+  const connection = await pool.getConnection(async (conn) => conn);
 
+  const totalTags = data.tags.length;
+
+  // 게시글 등록
+  const addPostQuery = `
+  INSERT INTO Post (userIndex, productName, categoryIndex, price, changePrice, freeDelievery, place, onlyMyPlace, content, supplies, productCondition, canExchange)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+  `
+  var params = [data.userIndex, data.productName, data.categoryIndex, data.price, data.changePrice, data.freeDelievery, data.place, data.onlyMyPlace, data.content, data.supplies, data.productCondition, data.canExchange];
+
+  const [rows] = await connection.query(
+    addPostQuery,
+    params
+  );
+
+  const getPostIndexQuery = `
+  SELECT MAX(postIndex) AS postIndex FROM Post;
+  `
+  const [index] = await connection.query(getPostIndexQuery);
+  const postIndex = JSON.parse(JSON.stringify(index))[0].postIndex
+  console.log('postIndex >>', postIndex);
+
+  // 게시글 이미지 등록 (최대 12장)
+  const addImgQuery = `
+  
+  `
+
+  // 게시글 태그 등록 (최대 5개)
+  const addTagQuery = `
+  INSERT INTO postTag (postIndex, tag)
+  VALUES (?, ?);
+  `
+  let value = 0;
+  while (value < totalTags) {
+    var params2 = [postIndex, data.tags[value]];
+    const [rows2] = await connection.query(
+      addTagQuery,
+      params3
+    );
+    console.log(params2);
+    value++;
+  }
+  connection.release();
+  return rows;
+}
 
 module.exports = {
   duplicateCheck,
@@ -276,5 +324,5 @@ module.exports = {
   seeSubsubCategoryPost,
   seePost,
   getPlace,
-  addPost
+  //addPost
 };
