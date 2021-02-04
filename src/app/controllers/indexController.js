@@ -378,3 +378,38 @@ exports.doFollow = async function (req, res) {
         });
     }
 }
+
+exports.getJjimList = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+    const sort = req.query.sort;
+    let sortBy = 0;
+
+    if (sort == null) {
+        sortBy = 0;
+    } else {
+        sortBy = sort;
+    }
+    
+    console.log('sort >>', sortBy);
+
+    try {
+        const rows = await indexDao.getJjim(userIndex, sortBy);
+
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"찜 목록 불러오기 성공",
+            sort:sortBy,
+            rows: rows
+        });
+
+    } catch (err) {
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+        return res.json({
+            isSuccess:false,
+            code:201,
+            message:"쿼리 실행 실패"
+        });
+    }
+}

@@ -369,6 +369,45 @@ async function doFollow(userIndex, followIndex) {
   return result;
 }
 
+// 찜 목록 불러오기
+async function getJjim(userIndex, sortBy) {
+
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getJjimQuery = `
+  SELECT
+       p.postIndex,
+       (SELECT pi.postImgURL FROM postImg pi WHERE pi.postIndex = p.postIndex AND pi.isFirst = 1) AS postImgURL,
+       p.productName, p.price, u.userIndex, u.profileImgURL, u.userName,
+       (CASE
+            WHEN TIMESTAMPDIFF(MINUTE, p.createdAt, NOW()) < 60 THEN CONCAT(TIMESTAMPDIFF(MINUTE, p.createdAt, NOW()), '분 전')
+            WHEN TIMESTAMPDIFF(HOUR, p.createdAt, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, p.createdAt, NOW()), '시간 전')
+            WHEN TIMESTAMPDIFF(DAY, p.createdAt, NOW()) < 31 THEN CONCAT(TIMESTAMPDIFF(DAY, p.createdAt, NOW()), '일 전')
+            WHEN TIMESTAMPDIFF(MONTH, p.createdAt, NOW()) < 12 THEN CONCAT(TIMESTAMPDIFF(MONTH, p.createdAt, NOW()), '달 전')
+            ELSE CONCAT(TIMESTAMPDIFF(YEAR, p.createdAt, NOW()), '년 전')
+        END) AS uploadDate,
+       (SELECT py.status FROM Payment py WHERE py.postIndex = p.postIndex) AS paymentStatus
+  FROM Post p LEFT JOIN User u ON p.userIndex = u.userIndex LEFT JOIN Jjim j ON j.postIndex = p.postIndex
+  WHERE j.userIndex = ?
+  ORDER BY
+    (CASE WHEN ? = 0 THEN p.createdAt END) DESC,
+    (CASE WHEN ? = 1 THEN p.createdAt END) ASC,
+    (CASE WHEN ? = 2 THEN (SELECT w.watched FROM Watched w WHERE w.watchedIndex = p.postIndex) END) DESC,
+    (CASE WHEN ? = 3 THEN p.price END) ASC,
+    (CASE WHEN ? = 4 THEN p.price END) DESC;
+  `
+  
+  var getJjimParams = [userIndex, sortBy, sortBy, sortBy, sortBy, sortBy];
+
+  const [rows] = await connection.query(
+    getJjimQuery,
+    getJjimParams
+  );
+
+  connection.release();
+
+  return rows;
+}
+
 module.exports = {
   duplicateCheck,
   addUser,
@@ -379,5 +418,6 @@ module.exports = {
   seePost,
   addPost,
   doJjim,
-  doFollow
+  doFollow,
+  getJjim
 };

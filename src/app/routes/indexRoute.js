@@ -29,7 +29,7 @@ module.exports = function(app){
     // 세부 글 보기
     app.get('/post/:postIndex', jwtMiddleware, index.seePost);
     app.post('/post/:postIndex', jwtMiddleware, index.seePost);
-    
+
     // 게시글 찜하기
     app.post('/jjim', jwtMiddleware, index.doJjim);
 
@@ -40,7 +40,10 @@ module.exports = function(app){
     app.get('/post', jwtMiddleware, index.getPlace); // 위치 불러오기
     app.post('/post', jwtMiddleware, index.addPost); // 글 작성하기
 
+    // 찜 리스트 확인하기
+    app.get('/jjim-list', jwtMiddleware, index.getJjimList);
     
+      
 
 
 };
