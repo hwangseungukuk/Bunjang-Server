@@ -29,6 +29,7 @@ module.exports = function(app){
     // 세부 글 보기
     app.get('/post/:postIndex', jwtMiddleware, index.seePost);
     app.post('/post/:postIndex', jwtMiddleware, index.seePost);
+    
     // 게시글 찜하기
     app.post('/jjim', jwtMiddleware, index.doJjim);
 

@@ -48,42 +48,34 @@ exports.valid = async function (req, res) {
                         console.log('사용자 정보 결과 >>', JSON.parse(body.body));
                         
                         try {
-                            const connection = await pool.getConnection(async conn => conn);
-                            try {
-                                const [rows] = await indexDao.duplicateCheck(kakaopkID);
-                                isDuplicated = rows.isDuplicated;
-                                console.log('중복 검사 결과 >>', isDuplicated);
-                                if (isDuplicated == 0) {
-                                    // 유저 데이터 추가하고 userIndex 불러오기
-                                    const rows = await indexDao.addUser(kakaopkID);
-                                    console.log('유저 인덱스 >>', rows);
-                                    userIndex = rows.insertId;
-                                    console.log('데이터 추가>>', userIndex);
-                                }
-                                else if (isDuplicated == 1) {
-                                    // userIndex 불러오기
-                                    userIndex = rows.userIndex;
-                                    console.log('유저 인덱스 >>', userIndex);
-                                }
-
-                                //userName 생성
-                                let makeName = String(userIndex);
-                                userName = makeName.length >= 8 ? makeName:new Array(8-makeName.padEnd.length+1).join('0')+makeName;
-                                userName = '상점' + userName;
-
-                                const userData = {
-                                    userIndex: userIndex,
-                                    isDuplicated: isDuplicated,
-                                    userName: userName
-                                };
-                                resolve(userData); 
-
-                            } catch (err) {
-                                console.log(err);
-                                connection.release();
-                                return false;
+                            const [rows] = await indexDao.duplicateCheck(kakaopkID);
+                            isDuplicated = rows.isDuplicated;
+                            console.log('중복 검사 결과 >>', isDuplicated);
+                            if (isDuplicated == 0) {
+                                // 유저 데이터 추가하고 userIndex 불러오기
+                                const rows = await indexDao.addUser(kakaopkID);
+                                console.log('유저 인덱스 >>', rows);
+                                userIndex = rows.insertId;
+                                console.log('데이터 추가>>', userIndex);
                             }
-    
+                            else if (isDuplicated == 1) {
+                                // userIndex 불러오기
+                                userIndex = rows.userIndex;
+                                console.log('유저 인덱스 >>', userIndex);
+                            }
+
+                            //userName 생성
+                            let makeName = String(userIndex);
+                            userName = makeName.length >= 8 ? makeName:new Array(8-makeName.padEnd.length+1).join('0')+makeName;
+                            userName = '상점' + userName;
+
+                            const userData = {
+                                userIndex: userIndex,
+                                isDuplicated: isDuplicated,
+                                userName: userName
+                            };
+                            resolve(userData); 
+
                         } catch (err) {
                             console.log(err);
                             return false;
@@ -146,33 +138,22 @@ exports.main = async function (req, res) {
     const userIndex = req.verifiedToken.id;
     // 게시글 최신순으로 불러오기
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.mainFeed(userIndex);
+        const rows = await indexDao.mainFeed(userIndex);
 
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"메인 피드 불러오기 성공",
-                rows: rows
-            });
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"메인 피드 불러오기 성공",
+            rows: rows
+        });
 
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 };
@@ -182,31 +163,20 @@ exports.seeCategoryPost = async function (req, res) {
     const categoryIndex = req.params.categoryIndex;
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.seeCategoryPost(userIndex, categoryIndex);
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"특정 카테고리 글 불러오기 성공",
-                rows: rows
-            });
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
+        const rows = await indexDao.seeCategoryPost(userIndex, categoryIndex);
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"특정 카테고리 글 불러오기 성공",
+            rows: rows
+        });
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
@@ -216,31 +186,20 @@ exports.seeSubCategoryPost = async function (req, res) {
     const subCategoryIndex = req.params.subCategoryIndex;
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.seeSubCategoryPost(userIndex, subCategoryIndex);
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"특정 서브 카테고리 글 불러오기 성공",
-                rows: rows
-            });
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
+        const rows = await indexDao.seeSubCategoryPost(userIndex, subCategoryIndex);
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"특정 서브 카테고리 글 불러오기 성공",
+            rows: rows
+        });
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
@@ -250,31 +209,20 @@ exports.seeSubsubCategoryPost = async function (req, res) {
     const subsubCategoryIndex = req.params.subsubCategoryIndex;
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.seeSubsubCategoryPost(userIndex, subsubCategoryIndex);
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"특정 서브서브 카테고리 글 불러오기 성공",
-                rows: rows
-            });
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
+        const rows = await indexDao.seeSubsubCategoryPost(userIndex, subsubCategoryIndex);
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"특정 서브서브 카테고리 글 불러오기 성공",
+            rows: rows
+        });
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
@@ -284,33 +232,22 @@ exports.seePost = async function (req, res) {
     const postIndex = req.params.postIndex;
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.seePost(userIndex, postIndex);
+        const rows = await indexDao.seePost(userIndex, postIndex);
 
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"특정 글 불러오기 성공",
-                rows: rows
-            });
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"특정 글 불러오기 성공",
+            rows: rows
+        });
 
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
@@ -319,32 +256,21 @@ exports.getPlace = async function (req, res) {
     const userIndex = req.verifiedToken.id;
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.getPlace(userIndex);
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"유저 지역 불러오기 성공",
-                rows: rows
-            });
+        const rows = await indexDao.getPlace(userIndex);
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"유저 지역 불러오기 성공",
+            rows: rows
+        });
 
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
@@ -383,33 +309,22 @@ exports.addPost = async function (req, res) {
     console.log('body >>', result);
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.addPost(result);
+        const rows = await indexDao.addPost(result);
 
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"게시글 등록 성공",
-                rows: rows
-            });
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"게시글 등록 성공",
+            rows: rows
+        });
 
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
@@ -419,33 +334,22 @@ exports.doJjim = async function (req, res) {
     const postIndex = req.body.postIndex;
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.doJjim(userIndex, postIndex);
+        const rows = await indexDao.doJjim(userIndex, postIndex);
 
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"게시글 찜하기/찜 지우기 성공",
-                rows: rows
-            });
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"게시글 찜하기/찜 지우기 성공",
+            rows: rows
+        });
 
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
@@ -455,33 +359,22 @@ exports.doFollow = async function (req, res) {
     const followIndex = req.body.followIndex;
 
     try {
-        const connection = await pool.getConnection(async conn => conn);
-        try {
-            const rows = await indexDao.doFollow(userIndex, followIndex);
+        const rows = await indexDao.doFollow(userIndex, followIndex);
 
-            return res.json({
-                isSuccess:true,
-                code:100,
-                message:"유저 팔로우/언팔로우 하기 성공",
-                rows: rows
-            });
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"유저 팔로우/언팔로우 하기 성공",
+            rows: rows
+        });
 
-        } catch (err) {
-            console.log(err);
-            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
-            connection.release();
-            return res.json({
-                isSuccess:false,
-                code:201,
-                message:"쿼리 실행 실패"
-            });
-        }
     } catch (err) {
-        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
         return res.json({
             isSuccess:false,
-            code:202,
-            message:"DB 연결 실패"
+            code:201,
+            message:"쿼리 실행 실패"
         });
     }
 }
