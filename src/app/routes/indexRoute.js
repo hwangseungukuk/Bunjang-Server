@@ -30,15 +30,14 @@ module.exports = function(app){
     app.get('/post/:postIndex', jwtMiddleware, index.seePost);
 
     // 게시글 찜하기
-    app.post('/post/:postIndex', jwtMiddleware, index.seePost); //찜 하기, 팔로우하기
     app.post('/jjim', jwtMiddleware, index.doJjim);
 
     // 유저 팔로우하기
     app.post('/follow', jwtMiddleware, index.doFollow);
 
     // 글 작성하기
-    app.get('/write', jwtMiddleware, index.getPlace); // 위치 불러오기
-    app.post('/write', jwtMiddleware, index.addPost); // 글 작성하기
+    app.get('/post', jwtMiddleware, index.getPlace); // 위치 불러오기
+    app.post('/post', jwtMiddleware, index.addPost); // 글 작성하기
 
     
 
