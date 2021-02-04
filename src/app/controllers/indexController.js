@@ -282,13 +282,11 @@ exports.seeSubsubCategoryPost = async function (req, res) {
 exports.seePost = async function (req, res) {
     const userIndex = req.verifiedToken.id;
     const postIndex = req.params.postIndex;
-    const clickedJjim = req.body.clickedJjim;
-    const clickedFollow = req.body.clickedFollow;
 
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const rows = await indexDao.seePost(userIndex, clickedJjim, clickedFollow, postIndex);
+            const rows = await indexDao.seePost(userIndex, postIndex);
 
             return res.json({
                 isSuccess:true,
@@ -393,6 +391,78 @@ exports.addPost = async function (req, res) {
                 isSuccess:true,
                 code:100,
                 message:"게시글 등록 성공",
+                rows: rows
+            });
+
+        } catch (err) {
+            console.log(err);
+            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+            connection.release();
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
+        }
+    } catch (err) {
+        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
+    }
+}
+
+exports.doJjim = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+    const postIndex = req.body.postIndex;
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const rows = await indexDao.doJjim(userIndex, postIndex);
+
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"게시글 찜하기 성공",
+                rows: rows
+            });
+
+        } catch (err) {
+            console.log(err);
+            logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+            connection.release();
+            return res.json({
+                isSuccess:false,
+                code:201,
+                message:"쿼리 실행 실패"
+            });
+        }
+    } catch (err) {
+        logger.error(`example non transaction DB Connection error\n: ${JSON.stringify(err)}`);
+        return res.json({
+            isSuccess:false,
+            code:202,
+            message:"DB 연결 실패"
+        });
+    }
+}
+
+exports.doFollow = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+    const followIndex = req.body.followIndex;
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+            const rows = await indexDao.doJjim(userIndex, followIndex);
+
+            return res.json({
+                isSuccess:true,
+                code:100,
+                message:"게시글 찜하기 성공",
                 rows: rows
             });
 

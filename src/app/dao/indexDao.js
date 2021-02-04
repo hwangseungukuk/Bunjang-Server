@@ -108,7 +108,7 @@ async function seeSubsubCategoryPost(userIndex, subsubCategoryIndex) {
 }
 
 // 세부 글 보기
-async function seePost(userIndex, clickedJjim, clickedFollow, postIndex) {
+async function seePost(userIndex, postIndex) {
   const connection = await pool.getConnection(async (conn) => conn);
 
   const updateWatchedQuery = `
@@ -189,66 +189,6 @@ async function seePost(userIndex, clickedJjim, clickedFollow, postIndex) {
     review: rows3
   };
 
-  // 찜 하기
-  const didJjim = (JSON.parse(JSON.stringify(result)).postData)[0].didJjim;
-
-  const addJjimQuery = `
-  INSERT INTO Jjim (postIndex, userIndex)
-  VALUES (?, ?);
-  `
-  const deleteJjimQuery = `
-  DELETE FROM Jjim
-  WHERE postIndex = ? AND userIndex = ?;
-  `
-
-  if (clickedJjim == 1) {
-    var jjimParams = [postIndex, userIndex];
-    if (didJjim == 0) {
-      const [rows4] = await connection.query(
-        addJjimQuery,
-        jjimParams
-      );
-      console.log('찜합니다~');
-    }
-    else if (didJjim == 1) {
-      const [rows4] = await connection.query(
-        deleteJjimQuery,
-        jjimParams
-      );
-      console.log('찜 풉니다~');
-    } 
-  }
-
-  // 팔로우 하기
-  const didFollow = (JSON.parse(JSON.stringify(result)).postData)[0].didFollow;
-  const followIndex = (JSON.parse(JSON.stringify(result)).postData)[0].userIndex;
-
-  const followQuery = `
-  INSERT INTO Following (userIndex, followIndex)
-  VALUES (?, ?);
-  `
-  const unfollowQuery = `
-  DELETE FROM Following
-  WHERE userIndex = ? AND followIndex = ?;
-  `
-
-  if (clickedFollow == 1) {
-    var followParams = [userIndex, followIndex];
-    if (didFollow == 0) {
-      const [rows5] = await connection.query(
-        followQuery,
-        followParams
-      );
-      console.log('팔로합니다~');
-    }
-    else if (didFollow == 1) {
-      const [rows5] = await connection.query(
-        unfollowQuery,
-        followParams
-      );
-      console.log('언팔합니다~');
-    }
-  }
   connection.release();
   return result;
 }
@@ -291,11 +231,6 @@ async function addPost(data) {
   const postIndex = JSON.parse(JSON.stringify(index))[0].postIndex
   console.log('postIndex >>', postIndex);
 
-  // 게시글 이미지 등록 (최대 12장)
-  const addImgQuery = `
-  
-  `
-
   // 게시글 태그 등록 (최대 5개)
   const addTagQuery = `
   INSERT INTO postTag (postIndex, tag)
@@ -315,6 +250,95 @@ async function addPost(data) {
   return rows;
 }
 
+// 게시글 찜하기
+async function doJjim(userIndex, postIndex) {
+
+  const connection = await pool.getConnection(async (conn) => conn);
+  const checkJjimQuery = `
+  SELECT COUNT(*) AS didJjim FROM Jjim j
+  WHERE j.postIndex = ? AND j.userIndex = ?;
+  `
+  const doJjimQuery = `
+  INSERT INTO Jjim (postIndex, userIndex)
+  VALUES (?, ?);
+  `
+  const deleteJjimQuery = `
+  DELETE FROM Jjim
+  WHERE postIndex = ? AND userIndex = ?;
+  `
+  var jjimParams = [postIndex, userIndex];
+
+  const [checkJjimRows] = await connection.query(
+    checkJjimQuery,
+    jjimParams
+  );
+
+  const didJjim = JSON.parse(JSON.stringify(checkJjimRows))[0].didJjim;
+
+  if (didJjim == 0) {
+    const [rows] = await connection.query(
+      doJjimQuery,
+      jjimParams
+    );
+    console.log('찜합니다~');
+  }
+  else if (didJjim == 1) {
+    const [rows] = await connection.query(
+      deleteJjimQuery,
+      jjimParams
+    );
+    console.log('찜 풉니다~');
+  }
+
+  const [checkJjimRows2] = await connection.query(
+    checkJjimQuery,
+    jjimParams
+  );
+
+  const didJjim2 = JSON.parse(JSON.stringify(checkJjimRows2))[0].didJjim;
+    
+  const result = {
+    before: didJjim,
+    after: didJjim2
+  }
+  // const [rows] = await connection.query(doJjimQuery);
+  connection.release();
+  return result;
+
+}
+
+// 유저 팔로우하기
+async function doFollow(userIndex, followIndex) {
+
+  const followQuery = `
+  INSERT INTO Following (userIndex, followIndex)
+  VALUES (?, ?);
+  `
+  const unfollowQuery = `
+  DELETE FROM Following
+  WHERE userIndex = ? AND followIndex = ?;
+  `
+
+  if (clickedFollow == 1) {
+    var followParams = [userIndex, followIndex];
+    if (didFollow == 0) {
+      const [rows5] = await connection.query(
+        followQuery,
+        followParams
+      );
+      console.log('팔로합니다~');
+    }
+    else if (didFollow == 1) {
+      const [rows5] = await connection.query(
+        unfollowQuery,
+        followParams
+      );
+      console.log('언팔합니다~');
+    }
+  }
+
+}
+
 module.exports = {
   duplicateCheck,
   addUser,
@@ -323,6 +347,7 @@ module.exports = {
   seeSubCategoryPost,
   seeSubsubCategoryPost,
   seePost,
-  getPlace,
-  //addPost
+  addPost,
+  doJjim,
+  doFollow
 };
