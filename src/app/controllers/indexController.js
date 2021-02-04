@@ -426,7 +426,7 @@ exports.doJjim = async function (req, res) {
             return res.json({
                 isSuccess:true,
                 code:100,
-                message:"게시글 찜하기 성공",
+                message:"게시글 찜하기/찜 지우기 성공",
                 rows: rows
             });
 
@@ -457,12 +457,12 @@ exports.doFollow = async function (req, res) {
     try {
         const connection = await pool.getConnection(async conn => conn);
         try {
-            const rows = await indexDao.doJjim(userIndex, followIndex);
+            const rows = await indexDao.doFollow(userIndex, followIndex);
 
             return res.json({
                 isSuccess:true,
                 code:100,
-                message:"게시글 찜하기 성공",
+                message:"유저 팔로우/언팔로우 하기 성공",
                 rows: rows
             });
 

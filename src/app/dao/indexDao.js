@@ -301,15 +301,18 @@ async function doJjim(userIndex, postIndex) {
     before: didJjim,
     after: didJjim2
   }
-  // const [rows] = await connection.query(doJjimQuery);
   connection.release();
   return result;
-
 }
 
 // 유저 팔로우하기
 async function doFollow(userIndex, followIndex) {
 
+  const connection = await pool.getConnection(async (conn) => conn);
+  const checkFollowQuery = `
+  SELECT COUNT(*) AS didFollow FROM Following f
+  WHERE f.userIndex = ? AND f.followIndex = ?;
+  `
   const followQuery = `
   INSERT INTO Following (userIndex, followIndex)
   VALUES (?, ?);
@@ -318,25 +321,43 @@ async function doFollow(userIndex, followIndex) {
   DELETE FROM Following
   WHERE userIndex = ? AND followIndex = ?;
   `
+  var followParams = [userIndex, followIndex];
 
-  if (clickedFollow == 1) {
-    var followParams = [userIndex, followIndex];
-    if (didFollow == 0) {
-      const [rows5] = await connection.query(
-        followQuery,
-        followParams
-      );
-      console.log('팔로합니다~');
-    }
-    else if (didFollow == 1) {
-      const [rows5] = await connection.query(
-        unfollowQuery,
-        followParams
-      );
-      console.log('언팔합니다~');
-    }
+  const [checkFollowRows] = await connection.query(
+    checkFollowQuery,
+    followParams
+  );
+
+  const didFollow = JSON.parse(JSON.stringify(checkFollowRows))[0].didFollow;
+
+  if (didFollow == 0) {
+    const [rows] = await connection.query(
+      followQuery,
+      followParams
+    );
+    console.log('팔로우합니다~');
+  }
+  else if (didFollow == 1) {
+    const [rows] = await connection.query(
+      unfollowQuery,
+      followParams
+    );
+    console.log('언팔로우합니다~');
   }
 
+  const [checkFollowRows2] = await connection.query(
+    checkFollowQuery,
+    followParams
+  );
+
+  const didFollow2 = JSON.parse(JSON.stringify(checkFollowRows2))[0].didFollow;
+    
+  const result = {
+    before: didFollow,
+    after: didFollow2
+  }
+  connection.release();
+  return result;
 }
 
 module.exports = {
