@@ -43,7 +43,8 @@ module.exports = function(app){
     // 찜 리스트 확인하기
     app.get('/jjim-list', jwtMiddleware, index.getJjimList);
     
-      
+    // 팔로잉 리스트 확인하기
+    app.get('/following', jwtMiddleware, index.getFollowList);
 
 
 };

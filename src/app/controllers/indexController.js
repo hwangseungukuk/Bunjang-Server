@@ -413,3 +413,30 @@ exports.getJjimList = async function (req, res) {
         });
     }
 }
+
+exports.getFollowList = async function (req, res) {
+    const userIndex = req.verifiedToken.id;
+    try {
+        const rows1 = await indexDao.myFeed(userIndex);
+        const rows2 = await indexDao.following(userIndex);
+        const rows3 = await indexDao.recommend(userIndex);
+
+        return res.json({
+            isSuccess:true,
+            code:100,
+            message:"팔로우 목록 불러오기 성공",
+            myFeed: rows1,
+            following: rows2,
+            recommend: rows3
+        });
+
+    } catch (err) {
+        console.log(err);
+        logger.error(`example non transaction Query error\n: ${JSON.stringify(err)}`);
+        return res.json({
+            isSuccess:false,
+            code:201,
+            message:"쿼리 실행 실패"
+        });
+    }
+}

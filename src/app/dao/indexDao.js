@@ -408,6 +408,151 @@ async function getJjim(userIndex, sortBy) {
   return rows;
 }
 
+// 팔로잉 - 1) 내피드
+async function myFeed(userIndex) {
+
+  const connection = await pool.getConnection(async (conn) => conn);
+  const myFeedQuery = `
+  SELECT p.postIndex,
+       (SELECT pi.postImgURL FROM postImg pi WHERE pi.postIndex = p.postIndex AND pi.isFirst = 1) AS postImgURL,
+       p.price, p.productName, u.userIndex, u.profileImgURL, u.userName
+  FROM Post p LEFT JOIN User u ON p.userIndex = u.userIndex LEFT JOIN Following f ON f.followIndex = p.userIndex
+  WHERE f.userIndex = ${userIndex}
+  ORDER BY p.createdAt DESC;
+  `
+
+  const [rows] = await connection.query(myFeedQuery);
+
+  connection.release();
+
+  return rows;
+}
+
+// 팔로잉 - 2) 팔로잉
+async function following(userIndex) {
+
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getFollowingQuery = `
+  SELECT u.userIndex, u.profileImgURL, u.userName,
+       (SELECT COUNT(*) FROM Post p WHERE p.userIndex = u.userIndex) AS totalPost,
+       (SELECT COUNT(*) FROM Following f WHERE f.followIndex = u.userIndex) AS follower
+  FROM User u LEFT JOIN Following f ON f.followIndex = u.userIndex
+  WHERE f.userIndex = ? AND f.followIndex = ?;
+  `
+  const countFollowingQuery = `
+  SELECT COUNT(*) AS totalFollowing FROM Following f
+  WHERE f.userIndex = ${userIndex};
+  `
+  const getFollowingListQuery = `
+  SELECT f.followIndex FROM Following f
+  WHERE f.userIndex = ${userIndex};
+  `
+  const getPostDataQuery = `
+  SELECT p.userIndex, p.postIndex,
+       (SELECT pi.postImgURL FROM postImg pi WHERE pi.isFirst = 1 AND pi.postIndex = p.postIndex) AS postImgURL,
+       p.price
+  FROM Post p LEFT JOIN Following f ON f.followIndex = p.userIndex
+  WHERE f.userIndex = ? AND f.followIndex = ?
+  ORDER BY p.createdAt DESC LIMIT 3;
+  `
+
+  const [countFollow] = await connection.query(countFollowingQuery);
+  const countFollowNum = JSON.parse(JSON.stringify(countFollow))[0].totalFollowing;
+
+  const [getFollowingList] = await connection.query(getFollowingListQuery);
+
+  let count = 0;
+  let totalData = [];
+
+  while (count < countFollowNum) {
+    let index = JSON.parse(JSON.stringify(getFollowingList))[count].followIndex;
+    var getFollowingParams = [userIndex, index];
+
+    const [rows] = await connection.query(
+      getFollowingQuery,
+      getFollowingParams
+    );
+
+    const [rows2] = await connection.query(
+      getPostDataQuery,
+      getFollowingParams
+    )
+
+    const result = {
+      userData: rows,
+      postData: rows2
+    };
+
+    totalData[count] = result;
+    count += 1;
+  }
+
+  connection.release();
+
+  return totalData;
+}
+
+// 팔로잉 - 3) 추천
+async function recommend(userIndex) {
+
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getUserDataQuery = `
+  SELECT u.userIndex, u.profileImgURL, u.userName,
+       (SELECT COUNT(*) FROM Post p WHERE p.userIndex = u.userIndex) AS totalPost,
+       (SELECT COUNT(*) FROM Following f WHERE f.followIndex = u.userIndex) AS follower
+  FROM User u
+  WHERE u.userIndex = ?;
+  `
+  const getPostDataQuery = `
+  SELECT p.userIndex, p.postIndex,
+       (SELECT pi.postImgURL FROM postImg pi WHERE pi.isFirst = 1 AND pi.postIndex = p.postIndex) AS postImgURL,
+       p.price
+  FROM Post p
+  WHERE p.userIndex = ?
+  ORDER BY p.createdAt DESC LIMIT 3;
+  `
+  const getRandomUserIndexQuery = `
+  SELECT u.userIndex FROM User u
+  WHERE u.userIndex != ${userIndex}
+  ORDER BY RAND() LIMIT 5;
+  `
+  
+  const [getRandomUserIndexList] = await connection.query(getRandomUserIndexQuery);
+
+  let count = 0
+  let totalData = [];
+
+  while (count < 5) {
+    let index = JSON.parse(JSON.stringify(getRandomUserIndexList))[count].userIndex;
+
+    var randomParams = [index];
+
+    const [rows] = await connection.query(
+      getUserDataQuery,
+      randomParams
+    );
+
+    const [rows2] = await connection.query(
+      getPostDataQuery,
+      randomParams
+    )
+
+    const result = {
+      userData: rows,
+      postData: rows2
+    };
+
+    totalData[count] = result;
+    count += 1;
+
+  }
+
+  connection.release();
+
+  return totalData;
+}
+
+
 module.exports = {
   duplicateCheck,
   addUser,
@@ -419,5 +564,8 @@ module.exports = {
   addPost,
   doJjim,
   doFollow,
-  getJjim
+  getJjim,
+  myFeed,
+  following,
+  recommend
 };
