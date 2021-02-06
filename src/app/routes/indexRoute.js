@@ -44,7 +44,7 @@ module.exports = function(app){
     app.get('/jjim-list', jwtMiddleware, index.getJjimList);
     
     // 팔로잉 리스트 확인하기
-    app.get('/following', jwtMiddleware, index.getFollowList);
+    app.get('/follow-list', jwtMiddleware, index.getFollowList);
 
 
 };
