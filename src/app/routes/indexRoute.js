@@ -37,8 +37,8 @@ module.exports = function(app){
     app.post('/follow', jwtMiddleware, index.doFollow);
 
     // 글 작성하기
-    app.get('/post', jwtMiddleware, index.getPlace); // 위치 불러오기
-    app.post('/post', jwtMiddleware, index.addPost); // 글 작성하기
+    app.get('/write', jwtMiddleware, index.getPlace); // 위치 불러오기
+    app.post('/write', jwtMiddleware, index.addPost); // 글 작성하기
 
     // 찜 리스트 확인하기
     app.get('/jjim-list', jwtMiddleware, index.getJjimList);
