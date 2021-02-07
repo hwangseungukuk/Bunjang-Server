@@ -251,7 +251,7 @@ async function addPost(data) {
     var params2 = [postIndex, data.tags[value]];
     const [rows2] = await connection.query(
       addTagQuery,
-      params3
+      params2
     );
     console.log(params2);
     value++;
