@@ -562,6 +562,7 @@ module.exports = {
   seeSubCategoryPost,
   seeSubsubCategoryPost,
   seePost,
+  getPlace,
   addPost,
   doJjim,
   doFollow,
