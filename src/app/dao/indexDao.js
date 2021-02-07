@@ -164,6 +164,7 @@ async function seePost(userIndex, postIndex) {
 
   const seeReviewQuery = `
   SELECT r.reviewerIndex,
+       (SELECT u.userName FROM User u WHERE u.userIndex = r.reviewerIndex) AS reviewerName,
        (SELECT u.profileImgURL FROM User u WHERE u.userIndex = r.reviewerIndex) AS reviewerProfileImg,
        r.content, r.star,
        (CASE
