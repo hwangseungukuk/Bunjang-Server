@@ -5,6 +5,7 @@
 - Putty<br>
 - Node 14.15.3 <br>
 - Express 4.17.1 <br>
+- MySQL <br>
 - Datagrip 2020.3 <br>
 - Postman 8.0.5 <br>
 - AWS EC2, RDS, Route53
