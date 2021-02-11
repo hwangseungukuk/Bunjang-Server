@@ -32,7 +32,7 @@
 |11|GET|/follow-list|팔로잉 (내피드/팔로잉/추천) 항목 보기|
 |12|GET|/jjim-list?sort=0|찜 목록 보기|
 
-<br><br>
+<br>
 <h3> 📼 Explanation </h3>
 
 [![2021 Clone Coding 번개장터팀 Server](http://img.youtube.com/vi/Lp-J59ACagA/0.jpg)](https://youtu.be/Lp-J59ACagA) <br>
