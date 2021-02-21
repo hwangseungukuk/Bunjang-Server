@@ -2,14 +2,17 @@
 <img src="../master/Img/01_카카오로그인_1.png" height="300"> <img src="../master/Img/03_메인피드_1.png" height="300"> <img src="../master/Img/04_카테고리.png" height="300">
 
 <h3> ⚙ Tools/Environment </h3>
-- Visual Studio Code <br>
-- Putty<br>
+- Linux <br>
+- Ubuntu 18.04.5 <br>
+- Nginx 1.14.0 <br>
 - Node 14.15.3 <br>
 - Express 4.17.1 <br>
-- MySQL <br>
-- Datagrip 2020.3 <br>
-- Postman 8.0.5 <br>
-- AWS EC2, RDS, Route53
+- MySQL 8.0.20 <br>
+- AWS EC2, RDS, Route53 <br>
+- Visual Studio Code <br>
+- Datagrip <br>
+- Postman <br>
+
 <br><br>
 <h3>📅 Period</h3>
 2021/01/25 ~ 2021/02/07
