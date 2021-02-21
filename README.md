@@ -11,7 +11,7 @@
 - AWS EC2, RDS, Route53 <br>
 - Visual Studio Code <br>
 - Datagrip <br>
-- Postman <br>
+- Postman
 
 <br><br>
 <h3>📅 Period</h3>
