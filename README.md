@@ -21,7 +21,7 @@
 
 | Index | Method | URI | Description |
 |:-:|:-:|:-|:-|
-|1|POST|/valid-token|Access Token을 통한 카카오 로그인 유효성 검사|
+|1|POST|/valid-token|Access Token을 통한 유효성 검사 및 카카오 로그인(회원가입)|
 |2|GET|/|유저 기반 메인 피드 보기|
 |3|GET|/category/:categoryIndex|특정 카테고리 글 보기|
 |4|GET|/subCategory/:subCategoryIndex|특정 서브 카테고리 글 보기|
