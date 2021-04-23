@@ -4,11 +4,11 @@ const {logger} = require('./winston');
 require('dotenv').config();
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    port: process.env.DB_PORT,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
+    host: freedb.tech,
+    user: freedbtech_survey,
+    port: 3306,
+    password: qlalf12,
+    database: freedbtech_survey
 });
 
 module.exports = {
